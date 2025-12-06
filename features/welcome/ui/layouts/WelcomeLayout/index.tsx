@@ -1,19 +1,23 @@
 "use client";
 
+import { useCalendarEvents } from "@/features/welcome/hooks/useCalendarEvents";
+import CalendarExample from "@/features/welcome/ui/components/CalendarExample";
 import type { MenuProps } from "antd";
 import { Avatar, Card, Dropdown, Spin, Typography } from "antd";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { useCalendarEvents } from "@/features/welcome/hooks/useCalendarEvents";
-import CalendarExample from "@/features/welcome/ui/components/CalendarExample";
 
 const { Text } = Typography;
 
 export default function WelcomeLayout() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { events, isLoading: isLoadingEvents, isError } = useCalendarEvents({
+  const {
+    events,
+    isLoading: isLoadingEvents,
+    isError,
+  } = useCalendarEvents({
     maxResults: 10,
   });
 
@@ -28,6 +32,14 @@ export default function WelcomeLayout() {
   };
 
   const menuItems: MenuProps["items"] = [
+    {
+      key: "settings",
+      label: "Configuración",
+      onClick: () => router.push("/settings"),
+    },
+    {
+      type: "divider",
+    },
     {
       key: "logout",
       label: "Cerrar sesión",
@@ -48,14 +60,14 @@ export default function WelcomeLayout() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-black">
+    <div className="flex min-h-screen flex-col bg-zinc-50">
       <div className="flex justify-end p-4">
         <Dropdown menu={{ items: menuItems }} placement="bottomRight">
           <div className="flex cursor-pointer items-center gap-2">
             <Avatar src={session.user?.image}>
               {session.user?.name?.charAt(0) || session.user?.email?.charAt(0)}
             </Avatar>
-            <span className="text-black dark:text-zinc-50">
+            <span className="text-black">
               {session.user?.name || session.user?.email}
             </span>
           </div>
@@ -63,12 +75,12 @@ export default function WelcomeLayout() {
       </div>
       <div className="flex flex-1 flex-col items-center justify-center p-4">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-semibold text-black dark:text-zinc-50 mb-4">
+          <h1 className="text-4xl font-semibold text-black mb-4">
             ¡Bienvenido!
           </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
+          <p className="text-lg text-zinc-600">
             Has iniciado sesión correctamente como{" "}
-            <span className="font-medium text-black dark:text-zinc-50">
+            <span className="font-medium text-black">
               {session.user?.name || session.user?.email}
             </span>
           </p>
@@ -90,4 +102,3 @@ export default function WelcomeLayout() {
     </div>
   );
 }
-

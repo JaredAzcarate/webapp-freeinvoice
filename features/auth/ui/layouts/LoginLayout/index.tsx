@@ -1,9 +1,12 @@
 "use client";
 
-import { Button, Spin } from "antd";
+import LoginForm from "@/features/auth/ui/components/LoginForm";
+import { Button, Divider, Spin, Typography } from "antd";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+
+const { Title, Text } = Typography;
 
 export default function LoginLayout() {
   const { data: session, status } = useSession();
@@ -17,7 +20,7 @@ export default function LoginLayout() {
 
   if (status === "loading") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
+      <div className="flex min-h-screen items-center justify-center bg-zinc-50">
         <Spin size="large" />
       </div>
     );
@@ -28,23 +31,40 @@ export default function LoginLayout() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 dark:bg-black">
-      <div className="text-center">
-        <h1 className="text-4xl font-semibold text-black dark:text-zinc-50 mb-6">
-          FreeInvoice
-        </h1>
-        <p className="text-lg text-zinc-600 dark:text-zinc-400 mb-8">
-          Inicia sesión para continuar
-        </p>
+    <div className="flex min-h-screen items-center justify-center bg-zinc-50">
+      <div className="w-full max-w-md p-6">
+        <div className="text-center mb-8">
+          <Title level={2} className="mb-2">
+            FreeInvoice
+          </Title>
+          <Text type="secondary">Inicia sesión para continuar</Text>
+        </div>
+
+        <LoginForm />
+
+        <Divider>O</Divider>
+
         <Button
-          type="primary"
+          type="default"
           size="large"
+          block
           onClick={() => signIn("google", { callbackUrl: "/welcome" })}
         >
           Iniciar sesión con Google
         </Button>
+
+        <div className="text-center mt-4">
+          <Text type="secondary">
+            ¿No tienes cuenta?{" "}
+            <a
+              onClick={() => router.push("/register")}
+              className="cursor-pointer text-blue-500 hover:text-blue-600"
+            >
+              Regístrate
+            </a>
+          </Text>
+        </div>
       </div>
     </div>
   );
 }
-
