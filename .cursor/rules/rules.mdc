@@ -1,0 +1,371 @@
+---
+alwaysApply: true
+---
+
+# Project Rules - FreeInvoice
+
+This file contains all the architectural principles, conventions, and knowledge about this project. Follow these rules strictly when writing or modifying code.
+
+## Technology Stack
+
+- **Next.js** (App Router) - React framework with API routes
+- **TypeScript** - Type-safe JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
+- **React Query** - Server state management
+- **Ant Design** - React UI component library
+- **NextAuth.js** - Authentication
+- **PostgreSQL** (NeonDB) - Database
+- **Phosphoricons** - Icon library (https://phosphoricons.com/)
+
+## Core Principles
+
+### SOLID Principles
+
+- **Single Responsibility**: Each file/module has one clear purpose
+- **Open/Closed**: Open for extension, closed for modification
+- **Liskov Substitution**: Subtypes must be substitutable for their base types
+- **Interface Segregation**: Many specific interfaces are better than one general
+- **Dependency Inversion**: Depend on abstractions, not concretions
+
+### Architecture Principles
+
+- **Clean Architecture**: Separation of concerns across layers
+- **Domain-Driven Design**: Organize by business domains (features)
+- **Separation of Concerns**: Each layer has a single responsibility
+- **DRY**: Don't Repeat Yourself
+- **Feature-First**: Organize code by features, not by type
+
+## Project Structure
+
+```
+project/
+├── app/                    → Next.js App Router (pages & API routes)
+│   ├── api/                → API routes (organized by feature)
+│   │   ├── auth/           → Authentication endpoints
+│   │   └── calendar/        → Calendar endpoints
+│   ├── page.tsx            → Root page
+│   ├── welcome/            → Protected pages
+│   └── settings/            → Protected pages
+├── features/               → Domain-specific code (feature-first)
+│   └── [feature-name]/
+│       ├── types/           → Feature-specific TypeScript types
+│       ├── hooks/           → React Query hooks (call app/api/...)
+│       ├── utils/           → Helper functions
+│       └── ui/              → User interface
+│           ├── components/  → Reusable components within feature
+│           └── layouts/     → Page/section structures
+├── shared/                 → Shared code across features (NOT globals)
+│   ├── auth/               → RBAC constants and helpers
+│   ├── providers/          → React providers (SessionProvider, QueryClientProvider)
+│   ├── services/           → Shared services (email, etc.)
+│   └── types/              → Shared TypeScript types
+├── database/               → Database layer (organized by domain)
+│   ├── connection.ts       → Database connection pool
+│   ├── auth/               → Authentication queries
+│   │   └── users.ts
+│   ├── rbac/               → RBAC queries
+│   │   ├── roles.ts
+│   │   ├── permissions.ts
+│   │   ├── userRoles.ts
+│   │   └── rbac.ts
+│   └── migrations/         → SQL migration scripts
+├── middleware.ts           → Next.js middleware for route protection
+└── wiki/                   → Project documentation
+```
+
+## Features vs Shared Decision Rule
+
+```
+QUESTION: Will this code be used in other features?
+│
+├─ YES ──────────────────────────────┐
+│                                    │
+│  QUESTION: In how many?            │
+│  │                                 │
+│  ├─ 1-2 features → features/      │
+│  └─ 3+ features  → shared/         │
+│                                    │
+└─ NO ────────────────────────────┐ │
+                                  │ │
+                            features/│
+                                     └──> shared/
+```
+
+## Data Flow Architecture
+
+```
+Next.js API Routes (app/api/*/route.ts)
+  ↓ Returns full response with .data
+Hooks (features/*/hooks/use*.ts)
+  ↓ Extracts .data, transforms, returns states + data
+Layouts (features/*/ui/layouts/*)
+  ↓ Handles 4 states (loading, error, empty, success), orchestrates
+Components (features/*/ui/components/*)
+  ↓ Pure UI, receives props, no data fetching
+```
+
+## Naming Conventions
+
+### Files and Folders
+
+- **Files**: camelCase (`userCard.tsx`, `useUsers.ts`)
+- **Folders**: camelCase (`userFilters/`, `loginLayout/`)
+- **Components**: PascalCase (`UserCard`, `LoginForm`)
+- **Hooks**: camelCase with "use" prefix (`useUsers`, `useCalendarEvents`)
+- **Types**: PascalCase (`UserSummary`, `FetchUsersParams`)
+- **API Types**: `apiTypes[Entity].ts` (`apiTypesUser.ts`, `apiTypesAuth.ts`)
+
+### Imports Order
+
+1. External libraries (React, Next.js, Ant Design)
+2. Internal - Absolute imports (`@/features/...`, `@/shared/...`)
+3. Internal - Relative imports (`../../components/...`)
+4. Types (`import type { ... }`)
+5. Styles (if applicable)
+
+### Path Mapping
+
+- Always use `@/` alias for absolute imports
+- Never use deep relative paths like `../../../../`
+
+## API Consumption Flow
+
+1. **API Route** (`app/api/[endpoint]/route.ts`):
+
+   - Handles backend logic
+   - Returns full response: `{ data: ..., success: true }`
+   - Always includes `.data` property
+
+2. **Hook** (`features/*/hooks/use*.ts`):
+
+   - Uses React Query (`useQuery`, `useMutation`)
+   - Calls `/api/...` endpoints directly
+   - Extracts `.data` from response
+   - Returns: `{ data, isLoading, isError, error }`
+
+3. **Layout** (`features/*/ui/layouts/*`):
+
+   - Uses hooks
+   - Handles 4 states: Loading, Error, Empty, Success
+   - Orchestrates components
+
+4. **Component** (`features/*/ui/components/*`):
+   - Pure UI
+   - Receives data via props
+   - No data fetching
+
+## State Management
+
+### Queries (Read Operations)
+
+Always handle 4 states:
+
+- **Loading**: Show skeleton or spinner
+- **Error**: Show error message/component
+- **Empty**: Show empty state
+- **Success**: Show data
+
+### Mutations (Write Operations)
+
+Use states:
+
+- `isLoading` - Show loading indicator
+- `isSuccess` - Show success notification
+- `isError` - Show error notification
+
+### Error Handling
+
+- API routes: `try/catch` and throw errors
+- Hooks: React Query captures errors automatically
+- Layouts: Handle error states from hooks
+
+## RBAC (Role-Based Access Control)
+
+### Roles
+
+- `guest` - Read-only access (all read permissions)
+- `owner` - Full access (all permissions)
+
+### Permissions Format
+
+`resource:action` (e.g., `calendar:read`, `settings:update`)
+
+### Permission Constants
+
+Located in `shared/auth/permissions.ts`:
+
+- `PERMISSIONS.CALENDAR_READ`
+- `PERMISSIONS.SETTINGS_UPDATE`
+- `PERMISSIONS.AUTH_DELETE`
+- etc.
+
+### Checking Permissions in API Routes
+
+```typescript
+import { PERMISSIONS } from "@/shared/auth/permissions";
+import { checkPermission } from "@/shared/auth/rbac";
+
+const hasPermission = await checkPermission(
+  session.user.id,
+  PERMISSIONS.CALENDAR_READ
+);
+
+if (!hasPermission) {
+  return NextResponse.json({ error: "No tienes permiso" }, { status: 403 });
+}
+```
+
+### Adding Permissions for New Features
+
+When adding a new feature:
+
+1. Add permission constants to `shared/auth/permissions.ts`
+2. Create database migration to insert new permissions
+3. Ensure `owner` role gets new permissions automatically
+4. Use permissions in API routes
+
+## Middleware
+
+Location: `middleware.ts` in root
+
+- **Public routes**: `/`, `/register`, `/verify-email`
+- **Protected routes**: `/welcome`, `/settings`
+- Redirects unauthenticated users from protected routes
+- Redirects authenticated users from public routes (like `/`)
+
+## Database Organization
+
+Database is organized by **domains**, not by file type:
+
+```
+database/
+├── connection.ts       → Shared connection pool
+├── auth/               → Authentication domain
+│   └── users.ts
+└── rbac/               → RBAC domain
+    ├── roles.ts
+    ├── permissions.ts
+    ├── userRoles.ts
+    └── rbac.ts
+```
+
+## Notifications
+
+- **Golden Rule**: Notifications in components, NEVER in hooks
+- Use Ant Design `message` API for toasts
+- Use Ant Design `Modal.confirm` for confirmations
+- Show success/error notifications in components after mutations
+
+## Code Style
+
+### Language
+
+- **ALWAYS use ENGLISH** for:
+  - Variable names
+  - Function names
+  - Component names
+  - File names
+  - Comments
+  - Documentation
+
+### Comments
+
+- Use JSDoc for functions and components
+- Explain "why", not "what"
+- No emojis in comments
+
+### TypeScript
+
+- Always use TypeScript types
+- Avoid `any` type
+- Use interfaces for object shapes
+- Use types for unions/primitives
+
+### CSS
+
+- Use Tailwind CSS utility classes
+- No inline styles (except dynamic values)
+- No dark mode styles (removed from project)
+- Mobile-first approach
+
+## File Creation Rules
+
+- **NEVER create files without user authorization**
+- Always ask before creating new files
+- Follow the established structure
+- Use feature-first organization
+
+## Import Rules
+
+- Always use `@/` alias for absolute imports
+- Group imports: external → internal absolute → internal relative → types
+- Use `import type` for type-only imports
+
+## Component Rules
+
+- Components are pure UI (no data fetching)
+- Receive data via props
+- Handle loading/error states via props
+- Use Ant Design components
+- Use Phosphoricons for icons
+
+## API Route Rules
+
+- Always check authentication first
+- Check permissions using `checkPermission()`
+- Return proper HTTP status codes (401, 403, 500)
+- Return response with `.data` property
+- Handle errors with try/catch
+- Use JSDoc comments
+
+## Hook Rules
+
+- Use React Query (`useQuery`, `useMutation`)
+- Call `/api/...` endpoints directly
+- Extract `.data` from response
+- Return states: `isLoading`, `isError`, `error`, `data`
+- Never show notifications in hooks
+
+## Layout Rules
+
+- Use hooks to fetch data
+- Handle 4 states: Loading, Error, Empty, Success
+- Orchestrate components
+- Pass data to components via props
+
+## Database Rules
+
+- All database functions in `database/` organized by domain
+- Use connection pool from `database/connection.ts`
+- Always handle errors
+- Use parameterized queries (never string concatenation)
+- Check `rowCount` for null safety: `(result.rowCount ?? 0) > 0`
+
+## Authentication Rules
+
+- Use NextAuth.js for authentication
+- Support Google OAuth and email/password
+- Store user roles in session
+- Check permissions in API routes, not just UI
+- Middleware handles route protection
+
+## Default Behavior
+
+- New users get `owner` role by default
+- All new permissions should be assigned to `owner` role
+- Use constants from `shared/auth/` for roles and permissions
+- Always verify permissions server-side
+
+## Documentation
+
+- All code should have JSDoc comments
+- Complex logic should be explained
+- Use English for all documentation
+- Reference wiki files when appropriate
+
+## Testing Considerations
+
+- Write testable code (pure functions)
+- Separate concerns for easier testing
+- Mock external dependencies
+- Test business logic, not implementation details

@@ -1,4 +1,4 @@
-import { verifyUserEmail } from "@/database/users";
+import { verifyUserEmail } from "@/database/auth/users";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

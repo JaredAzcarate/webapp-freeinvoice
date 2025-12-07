@@ -6,7 +6,6 @@ import type { MenuProps } from "antd";
 import { Avatar, Card, Dropdown, Spin, Typography } from "antd";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const { Text } = Typography;
 
@@ -21,11 +20,7 @@ export default function WelcomeLayout() {
     maxResults: 10,
   });
 
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/");
-    }
-  }, [status, router]);
+  // Authentication is handled by middleware
 
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/" });

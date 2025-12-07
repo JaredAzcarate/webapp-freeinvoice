@@ -478,7 +478,9 @@ export default function UserCard({ user }: UserCardProps) {
 
   return (
     <div>
-      <h3>{user.firstName} {user.lastName}</h3>
+      <h3>
+        {user.firstName} {user.lastName}
+      </h3>
       <p>{formattedEmail}</p>
     </div>
   );
@@ -510,7 +512,7 @@ function ComponentB() {
 }
 
 // ✅ GOOD - Reusing function
-// globals/utils/formatPhone.ts
+// shared/utils/formatPhone.ts
 export function formatPhone(phone: string): string {
   return phone
     .replace(/\D/g, "")
@@ -549,7 +551,7 @@ function ComponentB() {
 }
 
 // ✅ GOOD - Reusable hook
-// globals/hooks/useQueryParams.ts
+// shared/hooks/useQueryParams.ts
 export function useQueryParams() {
   const router = useRouter();
 
@@ -578,7 +580,10 @@ function ComponentB() {
 // ❌ BAD - Duplicating button structure
 function ComponentA() {
   return (
-    <button className="btn-primary flex items-center gap-2" onClick={handleClick}>
+    <button
+      className="btn-primary flex items-center gap-2"
+      onClick={handleClick}
+    >
       <SaveIcon />
       <span>Save</span>
     </button>
@@ -587,7 +592,10 @@ function ComponentA() {
 
 function ComponentB() {
   return (
-    <button className="btn-primary flex items-center gap-2" onClick={handleSend}>
+    <button
+      className="btn-primary flex items-center gap-2"
+      onClick={handleSend}
+    >
       <SendIcon />
       <span>Send</span>
     </button>
@@ -595,7 +603,7 @@ function ComponentB() {
 }
 
 // ✅ GOOD - Reusable component
-// globals/ui/components/ButtonBase/index.tsx
+// shared/ui/components/ButtonBase/index.tsx
 export default function ButtonBase({ icon, text, onClick }: ButtonBaseProps) {
   return (
     <button className="btn-primary flex items-center gap-2" onClick={onClick}>
@@ -674,4 +682,3 @@ Now that you understand the fundamental principles:
 ---
 
 [← Back to Index](./README.md) | [Next: Architecture →](./02-ARCHITECTURE.md)
-

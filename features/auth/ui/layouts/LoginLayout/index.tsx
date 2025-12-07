@@ -4,7 +4,6 @@ import LoginForm from "@/features/auth/ui/components/LoginForm";
 import { Button, Divider, Spin, Typography } from "antd";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const { Title, Text } = Typography;
 
@@ -12,11 +11,7 @@ export default function LoginLayout() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  useEffect(() => {
-    if (status === "authenticated") {
-      router.push("/welcome");
-    }
-  }, [status, router]);
+  // Redirect is handled by middleware
 
   if (status === "loading") {
     return (

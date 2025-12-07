@@ -1,5 +1,5 @@
-import { getUserByEmail, updateVerificationToken } from "@/database/users";
-import { sendVerificationEmail } from "@/globals/services/email";
+import { getUserByEmail, updateVerificationToken } from "@/database/auth/users";
+import { sendVerificationEmail } from "@/shared/services/email";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

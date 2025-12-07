@@ -44,17 +44,17 @@
 
 ### Case Styles
 
-| Context              | Pattern    | Example          |
-| -------------------- | ---------- | ---------------- |
-| **Files**            | camelCase  | `userCard.tsx`   |
-| **Folders**          | camelCase  | `userFilters/`   |
-| **Components**       | PascalCase | `UserCard`       |
-| **Hooks**            | camelCase  | `useUsers`       |
-| **Functions**        | camelCase  | `fetchUsers`     |
-| **Variables**        | camelCase  | `userList`       |
-| **Constants**        | camelCase  | `maxItems`       |
-| **Types/Interfaces** | PascalCase | `UserSummary`    |
-| **CSS Classes**      | camelCase  | `.userCard`      |
+| Context              | Pattern    | Example        |
+| -------------------- | ---------- | -------------- |
+| **Files**            | camelCase  | `userCard.tsx` |
+| **Folders**          | camelCase  | `userFilters/` |
+| **Components**       | PascalCase | `UserCard`     |
+| **Hooks**            | camelCase  | `useUsers`     |
+| **Functions**        | camelCase  | `fetchUsers`   |
+| **Variables**        | camelCase  | `userList`     |
+| **Constants**        | camelCase  | `maxItems`     |
+| **Types/Interfaces** | PascalCase | `UserSummary`  |
+| **CSS Classes**      | camelCase  | `.userCard`    |
 
 ---
 
@@ -156,49 +156,49 @@ ui/components/user-card/     → kebab-case
 
 ```typescript
 // ✅ GOOD - Pattern: type + action + entity + context
-UserCard                     // User card
-OrderSummaryCard             // Order summary card
-ButtonEdit                   // Edit button
-ButtonClearFilters           // Button to clear filters
-ModalCreateProduct           // Modal to create product
-ProductFilters               // Product filters
-FormEditProfile              // Form to edit profile
+UserCard; // User card
+OrderSummaryCard; // Order summary card
+ButtonEdit; // Edit button
+ButtonClearFilters; // Button to clear filters
+ModalCreateProduct; // Modal to create product
+ProductFilters; // Product filters
+FormEditProfile; // Form to edit profile
 
 // ❌ BAD
-CardUser                     // Wrong order
-Card                         // Too generic
-CardToDisplayUser            // Too verbose
-user_card                    // Wrong case
+CardUser; // Wrong order
+Card; // Too generic
+CardToDisplayUser; // Too verbose
+user_card; // Wrong case
 ```
 
 ### Pure Visual Elements (Base)
 
 ```typescript
 // ✅ GOOD - Generic/base components
-ButtonBase                   // Generic button
-CardBase                     // Generic card
-InputBase                    // Generic input
-TagBase                      // Generic tag
+ButtonBase; // Generic button
+CardBase; // Generic card
+InputBase; // Generic input
+TagBase; // Generic tag
 
 // ❌ BAD
-BaseButton                   // Wrong order
-GenericButton                // Redundant
-Btn                          // Abbreviation
+BaseButton; // Wrong order
+GenericButton; // Redundant
+Btn; // Abbreviation
 ```
 
 ### Layouts
 
 ```typescript
 // ✅ GOOD - Pattern: layout + entity + context
-UserListLayout               // User list layout
-ProductListLayout            // Product list layout
-OrderDetailLayout            // Order detail layout
-CreateProductLayout          // Product creation layout
+UserListLayout; // User list layout
+ProductListLayout; // Product list layout
+OrderDetailLayout; // Order detail layout
+CreateProductLayout; // Product creation layout
 
 // ❌ BAD
-UsersLayout                  // Missing specificity
-UserList                     // Missing "layout" prefix
-PageLayout                   // Too generic
+UsersLayout; // Missing specificity
+UserList; // Missing "layout" prefix
+PageLayout; // Too generic
 ```
 
 ### Components with Skeleton
@@ -232,43 +232,43 @@ use[Entity][Complement?]
 
 ```typescript
 // ✅ GOOD - Fetch/manage entity data
-useUsers()                   // Fetch users
-useProducts()                // Fetch products
-useUserFilters()             // Fetch filter options
-useCompanyBenefits()         // Fetch company benefits
+useUsers(); // Fetch users
+useProducts(); // Fetch products
+useUserFilters(); // Fetch filter options
+useCompanyBenefits(); // Fetch company benefits
 
 // ❌ BAD
-getUsers()                   // Not a hook (missing "use")
-hookUsers()                  // Wrong prefix
-useFetchUsers()              // Redundant
+getUsers(); // Not a hook (missing "use")
+hookUsers(); // Wrong prefix
+useFetchUsers(); // Redundant
 ```
 
 ### Behavior Hooks
 
 ```typescript
 // ✅ GOOD - Manage behavior/state
-useQueryParams()             // Manage query params
-useLoadMore()                // Load more logic
-useSearchAndSort()           // Search and sort logic
-useNotification()            // Notifications
+useQueryParams(); // Manage query params
+useLoadMore(); // Load more logic
+useSearchAndSort(); // Search and sort logic
+useNotification(); // Notifications
 
 // ❌ BAD
-useParams()                  // Too generic (conflicts with Next.js)
-loadMore()                   // Not a hook
-useGetQueryParams()          // Redundant
+useParams(); // Too generic (conflicts with Next.js)
+loadMore(); // Not a hook
+useGetQueryParams(); // Redundant
 ```
 
 ### Specific vs Generic Hooks
 
 ```typescript
 // ✅ Features - Specific hooks
-features/users/hooks/useUsers.ts
-features/products/hooks/useProducts.ts
+features / users / hooks / useUsers.ts;
+features / products / hooks / useProducts.ts;
 
-// ✅ Globals - Generic hooks
-globals/hooks/useQueryParams.ts
-globals/hooks/useLocations.ts
-globals/hooks/useLoadMore.ts
+// ✅ Shared - Generic hooks
+shared / hooks / useQueryParams.ts;
+shared / hooks / useLocations.ts;
+shared / hooks / useLoadMore.ts;
 ```
 
 ### Hooks with Clear Action
@@ -277,19 +277,19 @@ globals/hooks/useLoadMore.ts
 // ✅ GOOD - Clear action in name
 
 // Fetch/Get data
-useFetchUsers()              // or useUsers()
-useGetProducts()             // or useProducts()
-useLoadPosts()               // or usePosts()
+useFetchUsers(); // or useUsers()
+useGetProducts(); // or useProducts()
+useLoadPosts(); // or usePosts()
 
 // Create/Update/Delete
-useCreateUser()
-useUpdateProduct()
-useDeletePost()
+useCreateUser();
+useUpdateProduct();
+useDeletePost();
 
 // Manage/Handle
-useManageCart()
-useHandlePayment()
-useControlModal()
+useManageCart();
+useHandlePayment();
+useControlModal();
 ```
 
 ---
@@ -304,26 +304,26 @@ API routes are located in `app/api/[endpoint]/route.ts` and follow RESTful conve
 
 ```typescript
 // ✅ GOOD - RESTful endpoints
-app/api/users/route.ts              // GET /api/users, POST /api/users
-app/api/users/[id]/route.ts         // GET /api/users/:id, PUT /api/users/:id
-app/api/users/[id]/follow/route.ts // POST /api/users/:id/follow
+app / api / users / route.ts; // GET /api/users, POST /api/users
+app / api / users / [id] / route.ts; // GET /api/users/:id, PUT /api/users/:id
+app / api / users / [id] / follow / route.ts; // POST /api/users/:id/follow
 
 // ❌ BAD
-app/api/getUsers/route.ts          // Avoid verbs in route names
-app/api/user/route.ts               // Use plural for resources
+app / api / getUsers / route.ts; // Avoid verbs in route names
+app / api / user / route.ts; // Use plural for resources
 ```
 
 ### HTTP Methods in Route Handlers
 
 ```typescript
 // app/api/users/route.ts
-export async function GET() { }     // Fetch users
-export async function POST() { }    // Create user
+export async function GET() {} // Fetch users
+export async function POST() {} // Create user
 
 // app/api/users/[id]/route.ts
-export async function GET() { }     // Get user by ID
-export async function PUT() { }    // Update user
-export async function DELETE() { }  // Delete user
+export async function GET() {} // Get user by ID
+export async function PUT() {} // Update user
+export async function DELETE() {} // Delete user
 ```
 
 ---
@@ -336,55 +336,55 @@ export async function DELETE() { }  // Delete user
 // ✅ GOOD - Clear, descriptive names
 
 // API Types
-export interface FetchUsersParams { }
-export interface FetchUsersResponse { }
-export interface CreateUserRequest { }
-export interface CreateUserResponse { }
+export interface FetchUsersParams {}
+export interface FetchUsersResponse {}
+export interface CreateUserRequest {}
+export interface CreateUserResponse {}
 
 // Domain Types
-export interface User { }
-export interface UserSummary { }
-export interface UserDetail { }
-export interface UserProfile { }
+export interface User {}
+export interface UserSummary {}
+export interface UserDetail {}
+export interface UserProfile {}
 
 // Component Props
-export interface UserCardProps { }
-export interface ProductFiltersProps { }
+export interface UserCardProps {}
+export interface ProductFiltersProps {}
 
 // Form Types
-export interface UserFormValues { }
-export interface ProductFormData { }
+export interface UserFormValues {}
+export interface ProductFormData {}
 
 // ❌ BAD
-export interface IUser { }          // Hungarian notation
-export interface user { }           // camelCase
-export interface UserType { }       // Redundant suffix
-export interface TUser { }          // Unnecessary prefix
+export interface IUser {} // Hungarian notation
+export interface user {} // camelCase
+export interface UserType {} // Redundant suffix
+export interface TUser {} // Unnecessary prefix
 ```
 
 ### Naming by Context
 
 ```typescript
 // API requests/responses
-FetchUsersParams
-FetchUsersResponse
-CreateProductRequest
-CreateProductResponse
+FetchUsersParams;
+FetchUsersResponse;
+CreateProductRequest;
+CreateProductResponse;
 
 // UI/Component
-UserCardProps
-ProductListProps
-FilterOptions
+UserCardProps;
+ProductListProps;
+FilterOptions;
 
 // Forms
-UserFormValues
-ProductFormData
-LoginFormFields
+UserFormValues;
+ProductFormData;
+LoginFormFields;
 
 // States
-UserListState
-ProductDetailState
-CartState
+UserListState;
+ProductDetailState;
+CartState;
 ```
 
 ---
@@ -401,60 +401,60 @@ CartState
 
 ```typescript
 // ✅ GOOD
-formatUserFilters()          // Format user filters
-formatPhone()                // Format phone number
-formatDate()                 // Format date
-formatCurrency()             // Format currency
-formatUserName()             // Format user name
+formatUserFilters(); // Format user filters
+formatPhone(); // Format phone number
+formatDate(); // Format date
+formatCurrency(); // Format currency
+formatUserName(); // Format user name
 
 // ❌ BAD
-userFiltersFormat()          // Wrong order
-formatter()                  // Too generic
-fmt()                        // Abbreviation
+userFiltersFormat(); // Wrong order
+formatter(); // Too generic
+fmt(); // Abbreviation
 ```
 
 ### Mapping Functions
 
 ```typescript
 // ✅ GOOD
-mapUsersToOptions()          // Map users to options
-mapRolesToSelectItems()      // Map roles to select
-mapProductsToCards()         // Map products to cards
+mapUsersToOptions(); // Map users to options
+mapRolesToSelectItems(); // Map roles to select
+mapProductsToCards(); // Map products to cards
 
 // ❌ BAD
-usersMapper()                // Wrong order
-map()                        // Too generic
-toOptions()                  // Missing entity
+usersMapper(); // Wrong order
+map(); // Too generic
+toOptions(); // Missing entity
 ```
 
 ### Validation Functions
 
 ```typescript
 // ✅ GOOD
-validateEmail()              // Validate email
-validatePhoneNumber()        // Validate phone
-isValidUser()                // Check if user is valid
-hasPermission()              // Check permission
+validateEmail(); // Validate email
+validatePhoneNumber(); // Validate phone
+isValidUser(); // Check if user is valid
+hasPermission(); // Check permission
 
 // ❌ BAD
-emailValidator()             // Noun instead of verb
-check()                      // Too generic
-valid()                      // Unclear
+emailValidator(); // Noun instead of verb
+check(); // Too generic
+valid(); // Unclear
 ```
 
 ### Calculation Functions
 
 ```typescript
 // ✅ GOOD
-calculateTotal()             // Calculate total
-calculateDiscount()          // Calculate discount
-calculateAge()               // Calculate age
-computeTax()                 // Compute tax
+calculateTotal(); // Calculate total
+calculateDiscount(); // Calculate discount
+calculateAge(); // Calculate age
+computeTax(); // Compute tax
 
 // ❌ BAD
-total()                      // No verb
-getTotal()                   // Use calculate for computations
-doCalculation()              // Too generic
+total(); // No verb
+getTotal(); // Use calculate for computations
+doCalculation(); // Too generic
 ```
 
 ---
@@ -472,10 +472,10 @@ const hasPermission = true;
 const itemCount = 0;
 
 // ❌ BAD
-const list = [];                // Too generic
-const user_list = [];           // snake_case
-const UserList = [];            // PascalCase
-const ul = [];                  // Abbreviation
+const list = []; // Too generic
+const user_list = []; // snake_case
+const UserList = []; // PascalCase
+const ul = []; // Abbreviation
 ```
 
 ### Boolean Variables
@@ -490,9 +490,9 @@ const isVisible = true;
 const hasPermission = false;
 
 // ❌ BAD
-const loading = true;           // No prefix
-const error = false;            // Ambiguous
-const visible = true;           // No prefix
+const loading = true; // No prefix
+const error = false; // Ambiguous
+const visible = true; // No prefix
 ```
 
 ### Constants
@@ -504,8 +504,8 @@ const defaultTimeout = 5000;
 const apiBaseUrl = "https://api.example.com";
 
 // ❌ BAD
-const MAX_ITEMS_PER_PAGE = 10;  // SCREAMING_SNAKE_CASE (use for true constants)
-const max_items = 10;            // snake_case
+const MAX_ITEMS_PER_PAGE = 10; // SCREAMING_SNAKE_CASE (use for true constants)
+const max_items = 10; // snake_case
 ```
 
 ### Arrays
@@ -517,24 +517,24 @@ const products = [];
 const selectedItems = [];
 
 // ❌ BAD
-const user = [];                // Singular for array
-const userArray = [];           // Redundant suffix
-const listOfUsers = [];         // Verbose
+const user = []; // Singular for array
+const userArray = []; // Redundant suffix
+const listOfUsers = []; // Verbose
 ```
 
 ### Functions
 
 ```typescript
 // ✅ GOOD - Verb + noun
-function fetchUsers() { }
-function createProduct() { }
-function handleSubmit() { }
-function validateForm() { }
+function fetchUsers() {}
+function createProduct() {}
+function handleSubmit() {}
+function validateForm() {}
 
 // ❌ BAD
-function users() { }            // No verb
-function create() { }           // No noun
-function handleIt() { }         // Unclear
+function users() {} // No verb
+function create() {} // No noun
+function handleIt() {} // Unclear
 ```
 
 ---
@@ -564,15 +564,22 @@ function handleIt() { }         // Unclear
 // UserCard.module.css
 
 // ✅ GOOD
-.userCard { }
-.userCardHeader { }
-.userCardContent { }
-.userCardActions { }
+.userCard {
+}
+.userCardHeader {
+}
+.userCardContent {
+}
+.userCardActions {
+}
 
 // ❌ BAD
-.user-card { }              // kebab-case
-.UserCard { }               // PascalCase
-.card { }                   // Too generic
+.user-card {
+} // kebab-case
+.UserCard {
+} // PascalCase
+.card {
+} // Too generic
 ```
 
 ---
@@ -591,7 +598,7 @@ import { Button, Modal } from "antd";
 
 // 2. Internal - Absolute imports (@/)
 import { useUsers } from "@/features/users/hooks/useUsers";
-import ButtonBase from "@/globals/ui/components/ButtonBase";
+import ButtonBase from "@/shared/ui/components/ButtonBase";
 
 // 3. Internal - Relative imports
 import UserCard from "../../components/UserCard";
@@ -609,12 +616,12 @@ import styles from "./UserList.module.css";
 ```typescript
 // ✅ GOOD - Use @ alias for absolute imports
 import { useUsers } from "@/features/users/hooks/useUsers";
-import ButtonBase from "@/globals/ui/components/ButtonBase";
-import { formatPhone } from "@/globals/utils/formatPhone";
+import ButtonBase from "@/shared/ui/components/ButtonBase";
+import { formatPhone } from "@/shared/utils/formatPhone";
 
 // ❌ BAD - Deep relative paths
 import { useUsers } from "../../../features/users/hooks/useUsers";
-import ButtonBase from "../../../../globals/ui/components/ButtonBase";
+import ButtonBase from "../../../../shared/ui/components/ButtonBase";
 ```
 
 ---
@@ -623,7 +630,7 @@ import ButtonBase from "../../../../globals/ui/components/ButtonBase";
 
 ### JSDoc for Functions
 
-```typescript
+````typescript
 // ✅ GOOD - Complete documentation
 /**
  * Fetch users based on search filters
@@ -637,7 +644,9 @@ import ButtonBase from "../../../../globals/ui/components/ButtonBase";
  * const users = await fetchUsers({ name: "John", role: "admin" });
  * ```
  */
-export async function fetchUsers(filters: FetchUsersParams): Promise<FetchUsersResponse> {
+export async function fetchUsers(
+  filters: FetchUsersParams
+): Promise<FetchUsersResponse> {
   // Implementation
 }
 
@@ -645,7 +654,7 @@ export async function fetchUsers(filters: FetchUsersParams): Promise<FetchUsersR
 export async function fetchUsers(filters: FetchUsersParams) {
   // Implementation
 }
-```
+````
 
 ### Inline Comments
 
@@ -662,12 +671,12 @@ if (isLoading) return;
 setLoading(true);
 
 // Map users
-users.map(u => u.name);
+users.map((u) => u.name);
 ```
 
 ### Component Documentation
 
-```typescript
+````typescript
 // ✅ GOOD
 /**
  * Card component to display user summary information
@@ -684,10 +693,16 @@ users.map(u => u.name);
  * />
  * ```
  */
-export default function UserCard({ id, firstName, lastName, email, onClick }: UserCardProps) {
+export default function UserCard({
+  id,
+  firstName,
+  lastName,
+  email,
+  onClick,
+}: UserCardProps) {
   // Implementation
 }
-```
+````
 
 ### TODO Comments
 
@@ -708,26 +723,26 @@ export default function UserCard({ id, firstName, lastName, email, onClick }: Us
 
 ### File Naming Cheat Sheet
 
-| Type       | Pattern              | Example                |
-| ---------- | -------------------- | ---------------------- |
-| Component  | `[Name].tsx`         | `UserCard.tsx`         |
-| Hook       | `use[Name].ts`       | `useUsers.ts`          |
-| API Route  | `app/api/[name]/route.ts` | `app/api/users/route.ts` |
-| Type       | `apiTypes[Name].ts`  | `apiTypesUser.ts`      |
-| Util       | `[verb][Name].ts`    | `formatUser.ts`        |
-| Layout     | `[Name]Layout.tsx`   | `UserListLayout.tsx`   |
+| Type      | Pattern                   | Example                  |
+| --------- | ------------------------- | ------------------------ |
+| Component | `[Name].tsx`              | `UserCard.tsx`           |
+| Hook      | `use[Name].ts`            | `useUsers.ts`            |
+| API Route | `app/api/[name]/route.ts` | `app/api/users/route.ts` |
+| Type      | `apiTypes[Name].ts`       | `apiTypesUser.ts`        |
+| Util      | `[verb][Name].ts`         | `formatUser.ts`          |
+| Layout    | `[Name]Layout.tsx`        | `UserListLayout.tsx`     |
 
 ### Component Naming Cheat Sheet
 
-| Pattern                  | Example              | Usage                |
-| ------------------------ | -------------------- | -------------------- |
-| `[Entity]Card`           | `UserCard`           | Display entity       |
-| `[Entity]List`           | `ProductList`        | List of entities     |
-| `[Entity]Filters`        | `UserFilters`        | Filter entities      |
-| `Modal[Action][Entity]`  | `ModalCreateProduct` | Modal for action     |
-| `Button[Action]`         | `ButtonEdit`         | Action button        |
-| `Form[Action][Entity]`   | `FormEditProfile`    | Form for action      |
-| `[Name]Base`             | `ButtonBase`         | Base/generic variant |
+| Pattern                 | Example              | Usage                |
+| ----------------------- | -------------------- | -------------------- |
+| `[Entity]Card`          | `UserCard`           | Display entity       |
+| `[Entity]List`          | `ProductList`        | List of entities     |
+| `[Entity]Filters`       | `UserFilters`        | Filter entities      |
+| `Modal[Action][Entity]` | `ModalCreateProduct` | Modal for action     |
+| `Button[Action]`        | `ButtonEdit`         | Action button        |
+| `Form[Action][Entity]`  | `FormEditProfile`    | Form for action      |
+| `[Name]Base`            | `ButtonBase`         | Base/generic variant |
 
 ---
 
@@ -738,4 +753,3 @@ export default function UserCard({ id, firstName, lastName, email, onClick }: Us
 ---
 
 [← Back: Architecture](./02-ARCHITECTURE.md) | [Index](./README.md) | [Next: API Consumption →](./04-API-CONSUMPTION.md)
-

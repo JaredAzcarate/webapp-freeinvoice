@@ -1,4 +1,6 @@
-import { getUserLoginMethods } from "@/database/users";
+import { getUserLoginMethods } from "@/database/auth/users";
+import { PERMISSIONS } from "@/shared/auth/permissions";
+import { checkPermission } from "@/shared/auth/rbac";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../[...nextauth]/route";
@@ -12,6 +14,19 @@ export async function GET(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    // Check permission
+    const hasPermission = await checkPermission(
+      session.user.id,
+      PERMISSIONS.AUTH_READ
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: "No tienes permiso para ver métodos de login" },
+        { status: 403 }
+      );
     }
 
     const methods = await getUserLoginMethods(session.user.id);

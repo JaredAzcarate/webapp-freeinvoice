@@ -36,7 +36,7 @@ Learn the fundamental architectural principles that guide our decisions:
 
 Understand how to organize code and structure features:
 
-- **Features vs Globals** - When to use each
+- **Features vs Shared** - When to use each
 - **Folder Structure** - Standard organization
 - **Data Flow** - How layers communicate
 - **Components and Layouts** - Differences and usage
@@ -106,6 +106,47 @@ Learn to use Ant Design for user notifications:
 
 ---
 
+### [7. RBAC](./07-RBAC.md)
+
+Learn about Role-Based Access Control system:
+
+- **Roles and Permissions** - Understanding RBAC concepts
+- **Database Structure** - Tables and relationships
+- **Roles Defined** - guest and owner roles
+- **Permissions** - Resource:action format
+- **Code Usage** - How to check permissions in API routes
+
+[📖 Read RBAC →](./07-RBAC.md)
+
+---
+
+### [8. Middleware](./08-MIDDLEWARE.md)
+
+Learn about Next.js middleware for route protection:
+
+- **Route Protection** - Protect routes based on authentication
+- **Public vs Protected Routes** - Define which routes require authentication
+- **Smart Redirects** - Redirect users based on authentication status
+- **Implementation** - Complete middleware example
+
+[📖 Read Middleware →](./08-MIDDLEWARE.md)
+
+---
+
+### [9. Best Practices - RBAC](./09-BEST-PRACTICES.md)
+
+Learn best practices for implementing RBAC:
+
+- **Use Constants** - Always use permission constants
+- **API Route Protection** - Enforce permissions server-side
+- **Helper Functions** - Use helper functions for cleaner code
+- **Error Handling** - Proper HTTP status codes
+- **Adding New Features** - How to add permissions for new features
+
+[📖 Read Best Practices →](./09-BEST-PRACTICES.md)
+
+---
+
 ## 🚀 Quick Start
 
 ### For New Developers
@@ -116,6 +157,9 @@ Learn to use Ant Design for user notifications:
 4. Understand **[API Consumption](./04-API-CONSUMPTION.md)** flow with Next.js
 5. Master **[State Management](./05-STATE-MANAGEMENT.md)** with React Query
 6. Learn **[Notifications](./06-NOTIFICATIONS.md)** with Ant Design
+7. Understand **[RBAC](./07-RBAC.md)** system for roles and permissions
+8. Learn **[Middleware](./08-MIDDLEWARE.md)** for route protection
+9. Review **[Best Practices](./09-BEST-PRACTICES.md)** for RBAC implementation
 
 ### For Experienced Developers
 
@@ -139,7 +183,7 @@ Before opening a PR, verify:
 - [ ] Followed SOLID principles?
 - [ ] Separated responsibilities into layers (types, hooks, ui)?
 - [ ] Used consistent naming conventions (camelCase, PascalCase)?
-- [ ] Componentized correctly (features vs globals)?
+- [ ] Componentized correctly (features vs shared)?
 - [ ] Documented with JSDoc?
 - [ ] Handled loading/error/empty states?
 - [ ] Removed unnecessary console.log?
@@ -251,10 +295,12 @@ Choose a page to start learning:
 → [**Naming Conventions**](./03-NAMING-CONVENTIONS.md) - Code conventions  
 → [**API Consumption**](./04-API-CONSUMPTION.md) - Next.js API Routes → Hooks → Layouts  
 → [**State Management**](./05-STATE-MANAGEMENT.md) - React Query states and lifecycles  
-→ [**Notifications**](./06-NOTIFICATIONS.md) - Ant Design notifications
+→ [**Notifications**](./06-NOTIFICATIONS.md) - Ant Design notifications  
+→ [**RBAC**](./07-RBAC.md) - Role-Based Access Control system  
+→ [**Middleware**](./08-MIDDLEWARE.md) - Route protection and authentication  
+→ [**Best Practices**](./09-BEST-PRACTICES.md) - RBAC best practices
 
 ---
 
 **Last Updated:** December 2025  
 **Version:** 1.0.0
-

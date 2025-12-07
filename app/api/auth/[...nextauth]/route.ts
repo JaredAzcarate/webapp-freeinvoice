@@ -3,7 +3,8 @@ import {
   getUserByEmail,
   mergeAccountWithGoogle,
   verifyPassword,
-} from "@/database/users";
+} from "@/database/auth/users";
+import { getUserRoles } from "@/database/rbac/userRoles";
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
@@ -107,26 +108,43 @@ export const authOptions: NextAuthOptions = {
         // user.id should be set by signIn callback for Google, or directly for credentials
         if (user.id) {
           token.id = parseInt(user.id, 10);
+          // Fetch user roles
+          try {
+            token.roles = await getUserRoles(token.id);
+          } catch (error) {
+            console.error("[NextAuth jwt] Error fetching roles:", error);
+          }
         } else if (user.email && account?.provider === "google") {
           // Fallback: fetch from database if not set by signIn callback
           try {
             const dbUser = await getUserByEmail(user.email);
             if (dbUser) {
               token.id = dbUser.id;
+              token.roles = await getUserRoles(dbUser.id);
             }
           } catch (error) {
             console.error("[NextAuth jwt] Error fetching user:", error);
           }
         }
+      } else if (token.id) {
+        // On subsequent requests, refresh roles if needed
+        if (!token.roles) {
+          try {
+            token.roles = await getUserRoles(token.id);
+          } catch (error) {
+            console.error("[NextAuth jwt] Error fetching roles:", error);
+          }
+        }
       }
 
-      // Keep existing token.id on subsequent requests
+      // Keep existing token.id and roles on subsequent requests
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       if (token.id) {
         session.user.id = token.id;
+        session.user.roles = token.roles || [];
       }
       return session;
     },

@@ -1,5 +1,7 @@
+import { ROLES } from "@/shared/auth/roles";
 import bcrypt from "bcrypt";
-import { getDatabasePool } from "./connection";
+import { getDatabasePool } from "../connection";
+import { assignRoleToUser } from "../rbac/userRoles";
 
 export interface User {
   id: number;
@@ -28,6 +30,10 @@ export async function createOrUpdateUser(
 ): Promise<User> {
   const pool = getDatabasePool();
 
+  // Check if user exists before insert
+  const existingUser = await getUserByEmail(email);
+  const isNewUser = !existingUser;
+
   const query = `
     INSERT INTO users (email, name, image, google_id)
     VALUES ($1, $2, $3, $4)
@@ -46,7 +52,15 @@ export async function createOrUpdateUser(
     image || null,
     googleId || null,
   ]);
-  return result.rows[0];
+
+  const user = result.rows[0];
+
+  // If it's a new user, assign owner role by default
+  if (isNewUser) {
+    await assignRoleToUser(user.id, ROLES.OWNER);
+  }
+
+  return user;
 }
 
 export async function getUserByEmail(email: string): Promise<User | null> {
@@ -65,6 +79,18 @@ export async function getUserById(id: number): Promise<User | null> {
   const result = await pool.query(query, [id]);
 
   return result.rows[0] || null;
+}
+
+/**
+ * Get all users
+ */
+export async function getAllUsers(): Promise<User[]> {
+  const pool = getDatabasePool();
+
+  const query = "SELECT * FROM users ORDER BY created_at";
+  const result = await pool.query(query);
+
+  return result.rows;
 }
 
 export async function getUserByGoogleId(
@@ -106,7 +132,12 @@ export async function createUserWithPassword(
     verificationTokenExpires,
   ]);
 
-  return result.rows[0];
+  const newUser = result.rows[0];
+
+  // Assign owner role by default to new users
+  await assignRoleToUser(newUser.id, ROLES.OWNER);
+
+  return newUser;
 }
 
 /**
@@ -312,3 +343,4 @@ export async function verifyPassword(
 
   return user;
 }
+

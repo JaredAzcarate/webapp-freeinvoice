@@ -82,12 +82,7 @@ if (isLoading) {
 
 ```typescript
 if (isError) {
-  return (
-    <ErrorContent
-      title="Error loading data"
-      message={error?.message}
-    />
-  );
+  return <ErrorContent title="Error loading data" message={error?.message} />;
 }
 ```
 
@@ -245,8 +240,7 @@ export function useManageProduct() {
 
   return {
     // Functions
-    createProduct: (data: CreateProductRequest) =>
-      createMutation.mutate(data),
+    createProduct: (data: CreateProductRequest) => createMutation.mutate(data),
     deleteProduct: (id: string) => deleteMutation.mutate(id),
 
     // ✅ Creation States
@@ -525,10 +519,7 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     // Capture backend error
-    console.error(
-      "[API /users] Error fetching users:",
-      error
-    );
+    console.error("[API /users] Error fetching users:", error);
 
     // Return error response
     return NextResponse.json(
@@ -723,7 +714,7 @@ useQuery({
 import { useEntity } from "@/features/[name]/hooks/useEntity";
 import ComponentSkeleton from "../../components/Component/skeleton";
 import Component from "../../components/Component";
-import ErrorContent from "@/globals/ui/components/ErrorContent";
+import ErrorContent from "@/shared/ui/components/ErrorContent";
 import { Empty } from "antd";
 
 export default function EntityLayout() {
@@ -778,7 +769,7 @@ import { useUserFilters } from "@/features/users/hooks/useUserFilters";
 import UserCard from "../../components/UserCard";
 import UserCardSkeleton from "../../components/UserCard/skeleton";
 import UserFilters from "../../components/UserFilters";
-import ErrorContent from "@/globals/ui/components/ErrorContent";
+import ErrorContent from "@/shared/ui/components/ErrorContent";
 
 export default function UserListLayout() {
   // Fetch filter options
@@ -905,7 +896,7 @@ if (isLoading) {
 Global component to display errors:
 
 ```typescript
-// globals/ui/components/ErrorContent/index.tsx
+// shared/ui/components/ErrorContent/index.tsx
 
 interface ErrorContentProps {
   title?: string;
@@ -923,8 +914,18 @@ export default function ErrorContent({
   return (
     <div className="flex flex-col items-center justify-center p-8 text-center">
       <div className="text-red-500 mb-2">
-        <svg className="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <svg
+          className="w-16 h-16 mx-auto"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
         </svg>
       </div>
       <h3 className="text-lg font-semibold mb-2">{title}</h3>
@@ -997,11 +998,11 @@ if (users.length === 0) {
 export async function POST(request: NextRequest) {
   try {
     const filters = await request.json();
-    
+
     const users = await getUsersFromDatabase(filters);
-    
+
     console.log("[API /users] Success:", users.length);
-    
+
     return NextResponse.json({
       data: users,
       total: users.length,
@@ -1234,4 +1235,3 @@ Now that you understand state management:
 ---
 
 [← Back: API Consumption](./04-API-CONSUMPTION.md) | [Index](./README.md) | [Next: Notifications →](./06-NOTIFICATIONS.md)
-

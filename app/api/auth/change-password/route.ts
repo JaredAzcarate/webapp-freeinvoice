@@ -1,4 +1,6 @@
-import { updatePassword } from "@/database/users";
+import { updatePassword } from "@/database/auth/users";
+import { PERMISSIONS } from "@/shared/auth/permissions";
+import { checkPermission } from "@/shared/auth/rbac";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../[...nextauth]/route";
@@ -12,6 +14,19 @@ export async function POST(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    // Check permission
+    const hasPermission = await checkPermission(
+      session.user.id,
+      PERMISSIONS.AUTH_UPDATE
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: "No tienes permiso para cambiar contraseña" },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();

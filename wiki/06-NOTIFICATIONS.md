@@ -2,7 +2,7 @@
 
 > How to use Ant Design notifications for user feedback
 
-[← Back: State Management](./05-STATE-MANAGEMENT.md) | [Index](./README.md)
+[← Back: State Management](./05-STATE-MANAGEMENT.md) | [Index](./README.md) | [Next: RBAC →](./07-RBAC.md)
 
 ---
 
@@ -202,7 +202,7 @@ message.success({
 ```typescript
 const saveData = async () => {
   message.loading("Saving...");
-  
+
   try {
     await createUser(userData);
     message.destroy(); // Remove loading
@@ -299,7 +299,7 @@ Create a custom hook to centralize notification logic:
 ### Hook Implementation
 
 ```typescript
-// globals/hooks/useNotification.ts
+// shared/hooks/useNotification.ts
 
 import { message, notification } from "antd";
 import type { NotificationPlacement } from "antd/es/notification/interface";
@@ -354,9 +354,7 @@ export function useNotification() {
    */
   const showApiError = (error: any, defaultMessage = "An error occurred") => {
     const errorMessage =
-      error?.response?.data?.message ||
-      error?.message ||
-      defaultMessage;
+      error?.response?.data?.message || error?.message || defaultMessage;
 
     message.error(errorMessage, 4);
   };
@@ -383,7 +381,7 @@ export function useNotification() {
 ### Hook Usage
 
 ```typescript
-import { useNotification } from "@/globals/hooks/useNotification";
+import { useNotification } from "@/shared/hooks/useNotification";
 
 export default function CreateUserForm() {
   const { showSuccess, showError, showApiError } = useNotification();
@@ -450,7 +448,7 @@ const showApiError = (error: any, defaultMessage = "An error occurred") => {
 ### Usage in Components
 
 ```typescript
-import { useNotification } from "@/globals/hooks/useNotification";
+import { useNotification } from "@/shared/hooks/useNotification";
 
 export default function UserForm() {
   const { showApiError } = useNotification();
@@ -479,7 +477,8 @@ import { Modal } from "antd";
 const handleDelete = (userId: string) => {
   Modal.confirm({
     title: "Delete User",
-    content: "Are you sure you want to delete this user? This action cannot be undone.",
+    content:
+      "Are you sure you want to delete this user? This action cannot be undone.",
     okText: "Yes, delete",
     cancelText: "Cancel",
     okType: "danger",
@@ -587,7 +586,11 @@ export default function UserListLayout() {
   return (
     <div>
       {users.map((user) => (
-        <UserCard key={user.id} {...user} onFollow={() => handleFollow(user.id)} />
+        <UserCard
+          key={user.id}
+          {...user}
+          onFollow={() => handleFollow(user.id)}
+        />
       ))}
     </div>
   );
@@ -623,11 +626,19 @@ export default function CreateUserForm() {
 
   return (
     <Form form={form} onFinish={handleSubmit}>
-      <Form.Item name="firstName" label="First Name" rules={[{ required: true }]}>
+      <Form.Item
+        name="firstName"
+        label="First Name"
+        rules={[{ required: true }]}
+      >
         <Input />
       </Form.Item>
 
-      <Form.Item name="email" label="Email" rules={[{ required: true, type: "email" }]}>
+      <Form.Item
+        name="email"
+        label="Email"
+        rules={[{ required: true, type: "email" }]}
+      >
         <Input />
       </Form.Item>
 
@@ -939,7 +950,7 @@ export default function UserForm() {
       onFinishFailed={handleValidationFailed}
     >
       {/* Form fields */}
-      
+
       <Button type="primary" htmlType="submit" loading={isLoading}>
         Create User
       </Button>
@@ -1015,8 +1026,6 @@ const {
 
 ## 📚 Next Steps
 
-→ Review [**State Management**](./05-STATE-MANAGEMENT.md) for React Query patterns  
----
+## → Learn about [**RBAC**](./07-RBAC.md) for roles and permissions
 
-[← Back: State Management](./05-STATE-MANAGEMENT.md) | [Index](./README.md)
-
+[← Back: State Management](./05-STATE-MANAGEMENT.md) | [Index](./README.md) | [Next: RBAC →](./07-RBAC.md)

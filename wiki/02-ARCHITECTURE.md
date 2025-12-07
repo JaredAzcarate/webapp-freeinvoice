@@ -9,10 +9,10 @@
 ## 📋 Table of Contents
 
 1. [Overview](#-overview)
-2. [Features vs Globals](#-features-vs-globals)
+2. [Features vs Shared](#-features-vs-shared)
 3. [Grouping Sub-Features](#-grouping-sub-features)
 4. [Feature Structure](#-feature-structure)
-5. [Globals Structure](#-globals-structure)
+5. [Shared Structure](#-shared-structure)
 6. [Data Flow](#-data-flow)
 7. [Practical Examples](#-practical-examples)
 8. [Implementation Checklist](#-implementation-checklist)
@@ -29,7 +29,7 @@ Our architecture follows a **modular organization** based on business domains (D
 project/
 ├── app/               → Next.js App Router (pages & API routes)
 ├── features/          → Domain-specific code
-├── globals/           → Shared code across features
+├── shared/            → Shared code across features
 ├── public/            → Static assets
 ├── styles/            → Global styles & Tailwind config
 └── ...
@@ -40,13 +40,13 @@ project/
 ```
 ┌────────────────────────────────────────────────────────┐
 │  If specific to a domain     → features/[domain]/      │
-│  If used in 3+ domains       → globals/                │
+│  If used in 3+ domains       → shared/                 │
 └────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🔀 Features vs Globals
+## 🔀 Features vs Shared
 
 ### 📁 Features - Domain-Specific Code
 
@@ -81,9 +81,9 @@ features/
 
 ---
 
-### 🌐 Globals - Shared Code
+### 🌐 Shared - Shared Code
 
-**Location:** `/globals/`
+**Location:** `/shared/`
 
 **What goes here:**
 
@@ -96,7 +96,7 @@ features/
 **Structure:**
 
 ```
-globals/
+shared/
 ├── hooks/         → useQueryParams, usePagination
 ├── types/         → FormOption, shared interfaces
 ├── ui/            → ButtonBase, CardBase, form fields
@@ -106,7 +106,7 @@ globals/
 **Example:**
 
 ```typescript
-// ✅ Goes in globals/
+// ✅ Goes in shared/
 - ButtonBase              → used in users, products, orders
 - useQueryParams()        → used in all features with filters
 - formatPhone()           → generic phone formatting
@@ -125,24 +125,24 @@ QUESTION: Will this code be used in other features?
 │  QUESTION: In how many?            │
 │  │                                 │
 │  ├─ 1-2 features → features/      │
-│  └─ 3+ features  → globals/       │
+│  └─ 3+ features  → shared/        │
 │                                    │
 └─ NO ────────────────────────────┐ │
                                   │ │
                             features/│
-                                     └──> globals/
+                                     └──> shared/
 ```
 
 **Practical examples:**
 
-| Code               | Used in                          | Where to place           |
-| ------------------ | -------------------------------- | ------------------------ |
-| `UserCard`         | Only in features/users           | `features/users/`        |
-| `ProductCard`      | Only in features/products        | `features/products/`     |
-| `ButtonBase`       | users, products, orders          | `globals/`               |
-| `useQueryParams`   | users, products, orders          | `globals/`               |
-| `formatEventDate`  | Only in events                   | `features/events/utils/` |
-| `formatDate`       | users, products, orders          | `globals/utils/`         |
+| Code              | Used in                   | Where to place           |
+| ----------------- | ------------------------- | ------------------------ |
+| `UserCard`        | Only in features/users    | `features/users/`        |
+| `ProductCard`     | Only in features/products | `features/products/`     |
+| `ButtonBase`      | users, products, orders   | `shared/`                |
+| `useQueryParams`  | users, products, orders   | `shared/`                |
+| `formatEventDate` | Only in events            | `features/events/utils/` |
+| `formatDate`      | users, products, orders   | `shared/utils/`          |
 
 ---
 
@@ -196,12 +196,12 @@ features/
 
 ### Practical Examples
 
-| Domain       | Sub-Features                    | Justification                                 |
-| ------------ | ------------------------------- | --------------------------------------------- |
+| Domain       | Sub-Features                            | Justification                         |
+| ------------ | --------------------------------------- | ------------------------------------- |
 | `auth/`      | login, register, forgot-password, oauth | All related to authentication process |
-| `ecommerce/` | products, cart, checkout        | All related to e-commerce domain              |
-| `users/`     | (single)                        | Single domain, no need for grouping           |
-| `posts/`     | (single)                        | Single domain, no need for grouping           |
+| `ecommerce/` | products, cart, checkout                | All related to e-commerce domain      |
+| `users/`     | (single)                                | Single domain, no need for grouping   |
+| `posts/`     | (single)                                | Single domain, no need for grouping   |
 
 ### Imports with Grouping
 
@@ -372,7 +372,10 @@ export function useUsers(filters: FetchUsersParams = {}) {
 
 import { useQuery } from "@tanstack/react-query";
 import { fetchRoles, fetchDepartments } from "../api/apiUserFilters";
-import { mapRolesToOptions, mapDepartmentsToOptions } from "../utils/mapUserFilters";
+import {
+  mapRolesToOptions,
+  mapDepartmentsToOptions,
+} from "../utils/mapUserFilters";
 
 /**
  * Hook to fetch all filter options
@@ -398,7 +401,9 @@ export function useUserFilters() {
 
   // Transform to UI format
   const roleOptions = roles?.data ? mapRolesToOptions(roles.data) : [];
-  const departmentOptions = departments?.data ? mapDepartmentsToOptions(departments.data) : [];
+  const departmentOptions = departments?.data
+    ? mapDepartmentsToOptions(departments.data)
+    : [];
 
   // Consolidated loading
   const isLoading = isLoadingRoles || isLoadingDepartments;
@@ -447,9 +452,7 @@ export function formatUserFiltersForAPI(
 ): FetchUsersParams {
   return {
     name: filter.name,
-    roles: filter.roles?.length
-      ? filter.roles.join(",")
-      : undefined,
+    roles: filter.roles?.length ? filter.roles.join(",") : undefined,
     departments: filter.departments?.length
       ? filter.departments.join(",")
       : undefined,
@@ -460,7 +463,7 @@ export function formatUserFiltersForAPI(
 ```typescript
 // features/users/utils/mapUserFilters.ts
 
-import { FormOption } from "@/globals/types/form";
+import { FormOption } from "@/shared/types/form";
 
 /**
  * Map roles from API to select format
@@ -546,12 +549,17 @@ export default function UserCard({
   onClick,
 }: UserCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow" onClick={onClick}>
+    <div
+      className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
+      onClick={onClick}
+    >
       <div className="flex items-center gap-4">
         <Avatar src={avatar} alt={`${firstName} ${lastName}`} size={64} />
 
         <div className="flex-1">
-          <h3 className="text-lg font-semibold">{firstName} {lastName}</h3>
+          <h3 className="text-lg font-semibold">
+            {firstName} {lastName}
+          </h3>
           <p className="text-gray-600">{role}</p>
           <p className="text-sm text-gray-500">{email}</p>
         </div>
@@ -603,7 +611,7 @@ import { Empty } from "antd";
 import { useUsers } from "@/features/users/hooks/useUsers";
 import UserCard from "../../components/UserCard";
 import UserCardSkeleton from "../../components/UserCard/skeleton";
-import ErrorContent from "@/globals/ui/components/ErrorContent";
+import ErrorContent from "@/shared/ui/components/ErrorContent";
 
 export default function UserListLayout() {
   const { users, isLoading, isError } = useUsers();
@@ -642,10 +650,10 @@ export default function UserListLayout() {
 
 ---
 
-## 🌍 Globals Structure
+## 🌍 Shared Structure
 
 ```
-globals/
+shared/
 ├── hooks/              → Reusable hooks
 │   ├── useQueryParams.ts
 │   ├── usePagination.ts
@@ -673,10 +681,10 @@ globals/
     └── formatCurrency.ts
 ```
 
-### Example: Global Hook
+### Example: Shared Hook
 
 ```typescript
-// globals/hooks/useQueryParams.ts
+// shared/hooks/useQueryParams.ts
 
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
@@ -688,14 +696,11 @@ import { useCallback } from "react";
 export function useQueryParams() {
   const router = useRouter();
 
-  const getQueryParam = useCallback(
-    (key: string): string | undefined => {
-      if (typeof window === "undefined") return undefined;
-      const params = new URLSearchParams(window.location.search);
-      return params.get(key) || undefined;
-    },
-    []
-  );
+  const getQueryParam = useCallback((key: string): string | undefined => {
+    if (typeof window === "undefined") return undefined;
+    const params = new URLSearchParams(window.location.search);
+    return params.get(key) || undefined;
+  }, []);
 
   const setQueryParam = useCallback(
     (key: string, value: string | undefined) => {
@@ -719,10 +724,10 @@ export function useQueryParams() {
 }
 ```
 
-### Example: Global Component
+### Example: Shared Component
 
 ```typescript
-// globals/ui/components/ButtonBase/types.ts
+// shared/ui/components/ButtonBase/types.ts
 
 export interface ButtonBaseProps {
   type?: "primary" | "default" | "dashed";
@@ -737,7 +742,7 @@ export interface ButtonBaseProps {
 ```
 
 ```typescript
-// globals/ui/components/ButtonBase/index.tsx
+// shared/ui/components/ButtonBase/index.tsx
 
 import { Button } from "antd";
 import { ButtonBaseProps } from "./types";
@@ -866,7 +871,7 @@ app/
 
 - [ ] Is the feature well defined?
 - [ ] Does something similar exist in other features?
-- [ ] Which globals/ components can I reuse?
+- [ ] Which shared/ components can I reuse?
 - [ ] Have I planned the folder structure?
 
 ### Creating the Structure
@@ -929,4 +934,3 @@ app/
 ---
 
 [← Back: Principles](./01-PRINCIPLES.md) | [Index](./README.md) | [Next: Naming Conventions →](./03-NAMING-CONVENTIONS.md)
-

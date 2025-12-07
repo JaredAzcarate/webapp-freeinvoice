@@ -1,3 +1,5 @@
+import { PERMISSIONS } from "@/shared/auth/permissions";
+import { checkPermission } from "@/shared/auth/rbac";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/route";
@@ -10,6 +12,26 @@ export async function GET(request: Request) {
       return NextResponse.json(
         { error: "No autenticado o sin token de acceso" },
         { status: 401 }
+      );
+    }
+
+    if (!session.user.id) {
+      return NextResponse.json(
+        { error: "Usuario no identificado" },
+        { status: 401 }
+      );
+    }
+
+    // Check permission
+    const hasPermission = await checkPermission(
+      session.user.id,
+      PERMISSIONS.CALENDAR_READ
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: "No tienes permiso para ver eventos" },
+        { status: 403 }
       );
     }
 

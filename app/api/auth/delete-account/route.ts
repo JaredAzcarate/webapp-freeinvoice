@@ -1,4 +1,6 @@
-import { deleteUser } from "@/database/users";
+import { deleteUser } from "@/database/auth/users";
+import { PERMISSIONS } from "@/shared/auth/permissions";
+import { checkPermission } from "@/shared/auth/rbac";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../[...nextauth]/route";
@@ -12,6 +14,19 @@ export async function DELETE(request: NextRequest) {
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+    }
+
+    // Check permission
+    const hasPermission = await checkPermission(
+      session.user.id,
+      PERMISSIONS.AUTH_DELETE
+    );
+
+    if (!hasPermission) {
+      return NextResponse.json(
+        { error: "No tienes permiso para eliminar cuenta" },
+        { status: 403 }
+      );
     }
 
     const success = await deleteUser(session.user.id);

@@ -629,7 +629,7 @@ import { Empty } from "antd";
 import { useUsers } from "@/features/users/hooks/useUsers";
 import UserCard from "../../components/UserCard";
 import UserCardSkeleton from "../../components/UserCard/skeleton";
-import ErrorContent from "@/globals/ui/components/ErrorContent";
+import ErrorContent from "@/shared/ui/components/ErrorContent";
 
 export default function UserListLayout() {
   // ✅ Use hook to fetch data
@@ -682,7 +682,7 @@ import { formatUserFiltersForAPI } from "@/features/users/utils/formatUserFilter
 import UserFilters from "../../components/UserFilters";
 import UserCard from "../../components/UserCard";
 import UserCardSkeleton from "../../components/UserCard/skeleton";
-import ErrorContent from "@/globals/ui/components/ErrorContent";
+import ErrorContent from "@/shared/ui/components/ErrorContent";
 
 export default function UserListLayout() {
   const router = useRouter();
@@ -849,8 +849,8 @@ export default function UserCard({
   onClick,
 }: UserCardProps) {
   return (
-    <div 
-      className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow" 
+    <div
+      className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-md transition-shadow"
       onClick={onClick}
     >
       <div className="flex items-center gap-4">
@@ -1275,4 +1275,3 @@ Now that you understand the API consumption flow:
 ---
 
 [← Back: Naming Conventions](./03-NAMING-CONVENTIONS.md) | [Index](./README.md) | [Next: State Management →](./05-STATE-MANAGEMENT.md)
-
