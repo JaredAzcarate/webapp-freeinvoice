@@ -1,6 +1,12 @@
-import { CalendarEvent } from "@/features/welcome/types/apiTypesCalendar";
+import { EventDay } from "@/shared/hooks/useEventsByGoogle";
+
+export type TimeFilterType = "week" | "month" | "year";
 
 export interface CalendarExampleProps {
-  events: CalendarEvent[];
+  eventsByDay: EventDay[];
+  timeFilter?: TimeFilterType;
+  dateRange?: {
+    timeMin: string;
+    timeMax: string;
+  };
 }
-

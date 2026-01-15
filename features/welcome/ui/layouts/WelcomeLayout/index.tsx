@@ -1,23 +1,51 @@
 "use client";
 
-import { useCalendarEvents } from "@/features/welcome/hooks/useCalendarEvents";
 import CalendarExample from "@/features/welcome/ui/components/CalendarExample";
+import { useEventsByGoogle } from "@/shared/hooks/useEventsByGoogle";
+import {
+  getLastMonthRange,
+  getLastWeekRange,
+  getLastYearRange,
+} from "@/shared/utils/dates";
 import type { MenuProps } from "antd";
-import { Avatar, Card, Dropdown, Spin, Typography } from "antd";
+import { Avatar, Button, Card, Dropdown, Spin, Typography } from "antd";
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useMemo, useState } from "react";
 
 const { Text } = Typography;
+
+type FilterType = "week" | "month" | "year";
 
 export default function WelcomeLayout() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [filter, setFilter] = useState<FilterType>("week");
+  const timeZone = "Europe/Madrid";
+
+  // Calculate date range based on selected filter
+  const dateRange = useMemo(() => {
+    switch (filter) {
+      case "week":
+        return getLastWeekRange(timeZone);
+      case "month":
+        return getLastMonthRange(timeZone);
+      case "year":
+        return getLastYearRange(timeZone);
+      default:
+        return getLastWeekRange(timeZone);
+    }
+  }, [filter, timeZone]);
+
   const {
-    events,
+    eventsByDay,
     isLoading: isLoadingEvents,
     isError,
-  } = useCalendarEvents({
-    maxResults: 10,
+  } = useEventsByGoogle({
+    timeMin: dateRange.timeMin,
+    timeMax: dateRange.timeMax,
+    maxResults: 2500,
+    timeZone,
   });
 
   // Authentication is handled by middleware
@@ -80,6 +108,26 @@ export default function WelcomeLayout() {
             </span>
           </p>
         </div>
+        <div className="mb-6 flex gap-2">
+          <Button
+            type={filter === "week" ? "primary" : "default"}
+            onClick={() => setFilter("week")}
+          >
+            Última Semana
+          </Button>
+          <Button
+            type={filter === "month" ? "primary" : "default"}
+            onClick={() => setFilter("month")}
+          >
+            Último Mes
+          </Button>
+          <Button
+            type={filter === "year" ? "primary" : "default"}
+            onClick={() => setFilter("year")}
+          >
+            Último Año
+          </Button>
+        </div>
         {isLoadingEvents ? (
           <div className="flex justify-center items-center p-8">
             <Spin size="large" />
@@ -91,7 +139,11 @@ export default function WelcomeLayout() {
             </Card>
           </div>
         ) : (
-          <CalendarExample events={events} />
+          <CalendarExample
+            eventsByDay={eventsByDay}
+            timeFilter={filter}
+            dateRange={dateRange}
+          />
         )}
       </div>
     </div>

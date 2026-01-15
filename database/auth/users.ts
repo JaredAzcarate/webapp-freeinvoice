@@ -343,4 +343,3 @@ export async function verifyPassword(
 
   return user;
 }
-

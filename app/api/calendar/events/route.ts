@@ -37,29 +37,52 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const timeMin = searchParams.get("timeMin") || new Date().toISOString();
+    const timeMax = searchParams.get("timeMax");
     const maxResults = searchParams.get("maxResults") || "10";
 
-    const response = await fetch(
-      `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin}&maxResults=${maxResults}&singleEvents=true&orderBy=startTime`,
-      {
+    const allEvents: any[] = [];
+    let pageToken: string | null = null;
+
+    do {
+      const urlParams = new URLSearchParams({
+        timeMin,
+        maxResults,
+        singleEvents: "true",
+        orderBy: "startTime",
+      });
+
+      if (timeMax) {
+        urlParams.set("timeMax", timeMax);
+      }
+
+      if (pageToken) {
+        urlParams.set("pageToken", pageToken);
+      }
+
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?${urlParams.toString()}`;
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `Bearer ${session.accessToken}`,
         },
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return NextResponse.json(
+          { error: "Error al obtener eventos", details: error },
+          { status: response.status }
+        );
       }
-    );
 
-    if (!response.ok) {
-      const error = await response.json();
-      return NextResponse.json(
-        { error: "Error al obtener eventos", details: error },
-        { status: response.status }
-      );
-    }
+      const data = await response.json();
+      allEvents.push(...(data.items || []));
+      pageToken = data.nextPageToken || null;
+    } while (pageToken);
 
-    const data = await response.json();
     return NextResponse.json({
-      data: data.items || [],
-      total: data.items?.length || 0,
+      data: allEvents,
+      total: allEvents.length,
     });
   } catch (error) {
     console.error("Error en API de calendario:", error);
