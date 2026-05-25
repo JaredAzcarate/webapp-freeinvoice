@@ -11,7 +11,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Public routes (no authentication required)
-  const publicRoutes = ["/", "/register", "/verify-email"];
+  const publicRoutes = ["/", "/login", "/register", "/verify-email"];
   const isPublicRoute = publicRoutes.includes(pathname);
 
   // Protected routes (authentication required)
@@ -27,11 +27,11 @@ export async function middleware(request: NextRequest) {
 
   // If accessing protected route and not authenticated
   if (isProtectedRoute && !token) {
-    return NextResponse.redirect(new URL("/", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // If accessing public route and already authenticated
-  if (isPublicRoute && token && pathname === "/") {
+  if (isPublicRoute && token && (pathname === "/" || pathname === "/login")) {
     return NextResponse.redirect(new URL("/welcome", request.url));
   }
 

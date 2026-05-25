@@ -23,6 +23,7 @@ interface TableEvent extends ProcessedEvent {
 export default function CalendarExample({
   eventsByDay,
   timeFilter = "week",
+  timeFilterLabel,
   dateRange,
 }: CalendarExampleProps) {
   // Flatten events for table display
@@ -109,6 +110,10 @@ export default function CalendarExample({
 
   // Get filter label
   const getFilterLabel = (): string => {
+    if (timeFilterLabel) {
+      return timeFilterLabel;
+    }
+
     switch (timeFilter) {
       case "week":
         return "Última Semana";
@@ -116,8 +121,12 @@ export default function CalendarExample({
         return "Último Mes";
       case "year":
         return "Último Año";
+      case "yearMonth":
+        return "Mes del año";
+      case "custom":
+        return "Rango personalizado";
       default:
-        return "Período Seleccionado";
+        return "Período seleccionado";
     }
   };
 

@@ -82,10 +82,87 @@ export function getMonthRange(
   timeMax: string;
 } {
   const monthStart = dateTime.setZone(timeZone).startOf("month");
-  const monthEnd = dateTime.setZone(timeZone).endOf("month");
+  const nextMonthStart = monthStart.plus({ months: 1 }).startOf("month");
 
   return {
     timeMin: monthStart.toISO()!,
-    timeMax: monthEnd.toISO()!,
+    timeMax: nextMonthStart.toISO()!,
+  };
+}
+
+export type MonthOption = {
+  value: string;
+  label: string;
+};
+
+/**
+ * Months from January of the current year through the current month (inclusive).
+ */
+export function getYearMonthsUpToToday(timeZone = "Europe/Madrid"): MonthOption[] {
+  const now = DateTime.now().setZone(timeZone);
+  const months: MonthOption[] = [];
+
+  for (let month = 1; month <= now.month; month++) {
+    const date = DateTime.fromObject(
+      { year: now.year, month, day: 1 },
+      { zone: timeZone }
+    );
+    months.push({
+      value: `${now.year}-${String(month).padStart(2, "0")}`,
+      label: date.setLocale("es").toFormat("LLLL yyyy"),
+    });
+  }
+
+  return months.reverse();
+}
+
+/**
+ * Date range for a calendar month key (YYYY-MM).
+ * Current month ends at today; past months use the full month.
+ */
+export function getDateRangeFromMonthKey(
+  monthKey: string,
+  timeZone = "Europe/Madrid"
+): {
+  timeMin: string;
+  timeMax: string;
+} {
+  const [yearStr, monthStr] = monthKey.split("-");
+  const year = Number.parseInt(yearStr, 10);
+  const month = Number.parseInt(monthStr, 10);
+  const monthStart = DateTime.fromObject(
+    { year, month, day: 1 },
+    { zone: timeZone }
+  ).startOf("month");
+  const now = DateTime.now().setZone(timeZone);
+  const isCurrentMonth = now.year === year && now.month === month;
+  const nextMonthStart = monthStart.plus({ months: 1 }).startOf("month");
+  const timeMax = isCurrentMonth
+    ? now.startOf("day").plus({ days: 1 })
+    : nextMonthStart;
+
+  return {
+    timeMin: monthStart.toISO()!,
+    timeMax: timeMax.toISO()!,
+  };
+}
+
+/**
+ * Custom inclusive date range (start and end dates).
+ */
+export function getCustomDateRange(
+  startDate: DateTime,
+  endDate: DateTime,
+  timeZone = "Europe/Madrid"
+): {
+  timeMin: string;
+  timeMax: string;
+} {
+  const timeMin = startDate.setZone(timeZone).startOf("day");
+  const timeMax = endDate.setZone(timeZone).startOf("day").plus({ days: 1 });
+
+  return {
+    timeMin: timeMin.toISO()!,
+    timeMax: timeMax.toISO()!,
   };
 }
