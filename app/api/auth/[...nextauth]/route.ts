@@ -2,6 +2,7 @@ import {
   createOrUpdateUser,
   getUserByEmail,
   mergeAccountWithGoogle,
+  updateUserGoogleTokens,
   verifyPassword,
 } from "@/database/auth/users";
 import { getUserRoles } from "@/database/rbac/userRoles";
@@ -50,6 +51,8 @@ export const authOptions: NextAuthOptions = {
         params: {
           scope:
             "openid email profile https://www.googleapis.com/auth/calendar.readonly",
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
@@ -134,6 +137,26 @@ export const authOptions: NextAuthOptions = {
           } catch (error) {
             console.error("[NextAuth jwt] Error fetching roles:", error);
           }
+        }
+      }
+
+      // Persist Google tokens once we know the DB user id (refresh only when returned)
+      if (account?.provider === "google" && token.id) {
+        try {
+          await updateUserGoogleTokens(token.id, {
+            ...(account.refresh_token
+              ? { refreshToken: account.refresh_token }
+              : {}),
+            accessToken: account.access_token,
+            expiresAt: account.expires_at
+              ? new Date(account.expires_at * 1000)
+              : undefined,
+          });
+        } catch (error) {
+          console.error(
+            "[NextAuth jwt] Error persisting Google tokens:",
+            error
+          );
         }
       }
 

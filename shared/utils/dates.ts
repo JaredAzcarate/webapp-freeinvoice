@@ -166,3 +166,66 @@ export function getCustomDateRange(
     timeMax: timeMax.toISO()!,
   };
 }
+
+/**
+ * Formats a Mon–Fri week label in Spanish, e.g. "28 jul – 1 ago 2026".
+ */
+function formatWeekLabel(monday: DateTime, friday: DateTime): string {
+  const start = monday.setLocale("es").toFormat("d LLL");
+  const end = friday.setLocale("es").toFormat("d LLL yyyy");
+  return `${start} – ${end}`;
+}
+
+/**
+ * Current week range Monday 00:00 through Friday inclusive.
+ * timeMax is Saturday 00:00 (exclusive end for Google Calendar API).
+ *
+ * @param now - Optional reference instant (defaults to DateTime.now())
+ * @param timeZone - IANA time zone (default: Europe/Madrid)
+ */
+export function getCurrentWeekMonFriRange(
+  now?: DateTime,
+  timeZone = "Europe/Madrid"
+): {
+  timeMin: string;
+  timeMax: string;
+  weekLabel: string;
+} {
+  const current = (now ?? DateTime.now()).setZone(timeZone);
+  const monday = current.startOf("week").startOf("day");
+  const friday = monday.plus({ days: 4 });
+  const saturday = monday.plus({ days: 5 }).startOf("day");
+
+  return {
+    timeMin: monday.toISO()!,
+    timeMax: saturday.toISO()!,
+    weekLabel: formatWeekLabel(monday, friday),
+  };
+}
+
+/**
+ * Month-to-date through the current week's Friday inclusive.
+ * timeMax matches the week end (Saturday 00:00 exclusive).
+ *
+ * @param now - Optional reference instant (defaults to DateTime.now())
+ * @param timeZone - IANA time zone (default: Europe/Madrid)
+ */
+export function getMonthToDateThroughFridayRange(
+  now?: DateTime,
+  timeZone = "Europe/Madrid"
+): {
+  timeMin: string;
+  timeMax: string;
+  monthLabel: string;
+} {
+  const current = (now ?? DateTime.now()).setZone(timeZone);
+  const monthStart = current.startOf("month");
+  const monday = current.startOf("week").startOf("day");
+  const saturday = monday.plus({ days: 5 }).startOf("day");
+
+  return {
+    timeMin: monthStart.toISO()!,
+    timeMax: saturday.toISO()!,
+    monthLabel: current.setLocale("es").toFormat("LLLL yyyy"),
+  };
+}
